@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI游戏生成器</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="game-navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <span>Menke AI</span>
+            </div>
+            
+            <!-- 项目菜单下拉列表 -->
+            <div class="navbar-dropdown">
+                <button class="dropdown-btn" id="project-menu-btn">
+                    <i class="fas fa-folder"></i>
+                    <span>项目</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu" id="project-dropdown">
+                    <div class="dropdown-item" data-action="new-project">
+                        <i class="fas fa-plus"></i>
+                        <span>创建新项目</span>
+                        <small>Ctrl+N</small>
+                    </div>
+                    <div class="dropdown-item" data-action="open-project">
+                        <i class="fas fa-folder-open"></i>
+                        <span>打开项目</span>
+                        <small>Ctrl+O</small>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" data-action="save-project">
+                        <i class="fas fa-save"></i>
+                        <span>保存项目</span>
+                        <small>Ctrl+S</small>
+                    </div>
+                    <div class="dropdown-item" data-action="export-project">
+                        <i class="fas fa-download"></i>
+                        <span>导出项目</span>
+                        <small>Ctrl+E</small>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" data-action="upload-project">
+                        <i class="fas fa-upload"></i>
+                        <span>上传项目</span>
+                    </div>
+                    <div class="dropdown-item" data-action="share-project">
+                        <i class="fas fa-share-alt"></i>
+                        <span>分享项目</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" data-action="project-settings">
+                        <i class="fas fa-cog"></i>
+                        <span>项目设置</span>
+                    </div>
+                </div>
+                <!-- 隐藏的文件输入 -->
+                <input type="file" id="project-upload" accept=".json,.zip" hidden>
+            </div>
+            
+            <div class="navbar-menu">
+                <div class="navbar-item active" data-page="flappy-bird">
+                    <i class="fas fa-dove"></i>
+                    <span>Flappy Bird</span>
+                </div>
+                <div class="navbar-item" data-page="snake">
+                    <i class="fas fa-snake"></i>
+                    <span>贪吃蛇</span>
+                </div>
+                <div class="navbar-item" data-page="tetris">
+                    <i class="fas fa-th-large"></i>
+                    <span>俄罗斯方块</span>
+                </div>
+                <div class="navbar-item" data-page="breakout">
+                    <i class="fas fa-circle"></i>
+                    <span>打砖块</span>
+                </div>
+                <div class="navbar-item" data-page="puzzle">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <span>拼图游戏</span>
+                </div>
+            </div>
+            
+            <div class="navbar-actions">
+                <button class="nav-btn" id="fullscreen-btn" title="全屏模式">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button class="nav-btn" id="settings-btn" title="设置">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="nav-btn" id="help-btn" title="帮助">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 左侧资源面板 -->
+        <div class="left-panel" id="left-panel">
+                          <div class="resource-header">
+                  <h2>资源库</h2>
+                  <div class="resource-tabs">
+                    <button class="tab-btn active" data-tab="code">
+                        <i class="fas fa-code"></i>
+                        代码
+                    </button>
+                    <button class="tab-btn" data-tab="images">
+                        <i class="fas fa-image"></i>
+                        图片
+                    </button>
+                    <button class="tab-btn" data-tab="music">
+                        <i class="fas fa-music"></i>
+                        音乐
+                    </button>
+                    <button class="tab-btn" data-tab="models">
+                        <i class="fas fa-cube"></i>
+                        建模
+                    </button>
+                    
+                </div>
+               
+            </div>
+            
+            <div class="resource-content">
+                <!-- 代码资源 -->
+                <div class="resource-panel active" id="code-panel">
+                    <div class="upload-section">
+                        <button class="upload-btn" data-type="code">
+                            <i class="fas fa-upload"></i>
+                            上传代码文件
+                        </button>
+                        <input type="file" id="code-upload" accept=".js,.ts,.html,.css,.json" multiple hidden>
+                    </div>
+                    <div class="resource-list">
+                        <div class="resource-item">
+                            <i class="fas fa-file-code"></i>
+                            <span>player.js</span>
+                        </div>
+                        <div class="resource-item">
+                            <i class="fas fa-file-code"></i>
+                            <span>enemy.js</span>
+                        </div>
+                        <div class="resource-item">
+                            <i class="fas fa-file-code"></i>
+                            <span>game.js</span>
+                        </div>
+                        <div class="resource-item">
+                            <i class="fas fa-file-code"></i>
+                            <span>physics.js</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 图片资源 -->
+                <div class="resource-panel" id="images-panel">
+                    <div class="upload-section">
+                        <button class="upload-btn" data-type="images">
+                            <i class="fas fa-upload"></i>
+                            上传图片文件
+                        </button>
+                        <input type="file" id="images-upload" accept=".jpg,.jpeg,.png,.gif,.svg,.webp" multiple hidden>
+                    </div>
+                    <div class="resource-grid">
+                        <div class="image-item">
+                            <div class="image-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span>角色1</span>
+                        </div>
+                        <div class="image-item">
+                            <div class="image-placeholder">
+                                <i class="fas fa-dragon"></i>
+                            </div>
+                            <span>敌人1</span>
+                        </div>
+                        <div class="image-item">
+                            <div class="image-placeholder">
+                                <i class="fas fa-tree"></i>
+                            </div>
+                            <span>背景1</span>
+                        </div>
+                        <div class="image-item">
+                            <div class="image-placeholder">
+                                <i class="fas fa-gem"></i>
+                            </div>
+                            <span>道具1</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 音乐资源 -->
+                <div class="resource-panel" id="music-panel">
+                    <div class="upload-section">
+                        <button class="upload-btn" data-type="music">
+                            <i class="fas fa-upload"></i>
+                            上传音频文件
+                        </button>
+                        <input type="file" id="music-upload" accept=".mp3,.wav,.ogg,.m4a,.flac" multiple hidden>
+                    </div>
+                    <div class="resource-list">
+                        <div class="audio-item">
+                            <i class="fas fa-play-circle"></i>
+                            <span>背景音乐1.mp3</span>
+                            <button class="play-btn"><i class="fas fa-play"></i></button>
+                        </div>
+                        <div class="audio-item">
+                            <i class="fas fa-play-circle"></i>
+                            <span>音效-跳跃.wav</span>
+                            <button class="play-btn"><i class="fas fa-play"></i></button>
+                        </div>
+                        <div class="audio-item">
+                            <i class="fas fa-play-circle"></i>
+                            <span>音效-攻击.wav</span>
+                            <button class="play-btn"><i class="fas fa-play"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 建模资源 -->
+                <div class="resource-panel" id="models-panel">
+                    <div class="upload-section">
+                        <button class="upload-btn" data-type="models">
+                            <i class="fas fa-upload"></i>
+                            上传模型文件
+                        </button>
+                        <input type="file" id="models-upload" accept=".obj,.fbx,.gltf,.glb,.3ds,.blend" multiple hidden>
+                    </div>
+                    <div class="resource-grid">
+                        <div class="model-item">
+                            <div class="model-preview">
+                                <i class="fas fa-cube"></i>
+                            </div>
+                            <span>角色模型</span>
+                        </div>
+                        <div class="model-item">
+                            <div class="model-preview">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <span>建筑模型</span>
+                        </div>
+                        <div class="model-item">
+                            <div class="model-preview">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <span>载具模型</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI美术生成面板 -->
+                <div class="resource-panel" id="ai-generate-panel">
+                    <div class="ai-generate-container">
+                        <div class="ai-generate-header">
+                            <h3>AI美术生成</h3>
+                            <p>使用AI技术根据文字描述生成游戏美术资源</p>
+                        </div>
+                        
+                        <div class="ai-generate-form">
+                            <div class="form-group">
+                                <label for="prompt-input">图片描述 *</label>
+                                <textarea 
+                                    id="prompt-input" 
+                                    placeholder="请详细描述您想要生成的图片，例如：一个穿着蓝色盔甲的勇敢骑士，手持银色长剑，站在城堡前，夕阳西下，魔幻风格"
+                                    rows="4"
+                                ></textarea>
+                                <small>提示：详细的描述能帮助AI生成更符合期望的图片</small>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="image-style">图片风格</label>
+                                    <select id="image-style">
+                                        <option value="realistic">写实风格</option>
+                                        <option value="cartoon">卡通风格</option>
+                                        <option value="anime">动漫风格</option>
+                                        <option value="pixel">像素风格</option>
+                                        <option value="fantasy">魔幻风格</option>
+                                        <option value="sci-fi">科幻风格</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="image-size">图片尺寸</label>
+                                    <select id="image-size">
+                                        <option value="512x512">正方形 (512×512)</option>
+                                        <option value="768x512">横向 (768×512)</option>
+                                        <option value="512x768">纵向 (512×768)</option>
+                                        <option value="1024x1024">大图 (1024×1024)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="image-type">图片类型</label>
+                                    <select id="image-type">
+                                        <option value="character">角色</option>
+                                        <option value="enemy">敌人</option>
+                                        <option value="background">背景</option>
+                                        <option value="item">道具</option>
+                                        <option value="ui">界面元素</option>
+                                        <option value="effect">特效</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="image-quality">图片质量</label>
+                                    <select id="image-quality">
+                                        <option value="standard">标准质量</option>
+                                        <option value="high">高质量</option>
+                                        <option value="ultra">超高质量</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="negative-prompt">负面提示词（可选）</label>
+                                <input 
+                                    type="text" 
+                                    id="negative-prompt" 
+                                    placeholder="描述您不希望出现在图片中的内容，例如：模糊，低质量，变形"
+                                >
+                            </div>
+                            
+                            <div class="generate-actions">
+                                <button id="generate-btn" class="generate-btn">
+                                    <i class="fas fa-magic"></i>
+                                    开始生成
+                                </button>
+                                <button id="clear-form-btn" class="clear-btn">
+                                    <i class="fas fa-eraser"></i>
+                                    清空表单
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-generate-result">
+                            <div class="result-header">
+                                <h4>生成结果</h4>
+                                <div class="result-status" id="generation-status">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>等待生成指令</span>
+                                </div>
+                            </div>
+                            
+                            <div class="result-grid" id="result-grid">
+                                <div class="result-placeholder">
+                                    <i class="fas fa-image"></i>
+                                    <p>生成的图片将显示在这里</p>
+                                </div>
+                            </div>
+                            
+                            <div class="result-actions" id="result-actions" style="display: none;">
+                                <button class="action-btn primary" id="save-to-library-btn">
+                                    <i class="fas fa-plus"></i>
+                                    添加到资源库
+                                </button>
+                                <button class="action-btn" id="download-result-btn">
+                                    <i class="fas fa-download"></i>
+                                    下载图片
+                                </button>
+                                <button class="action-btn" id="regenerate-btn">
+                                    <i class="fas fa-redo"></i>
+                                    重新生成
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-tips">
+                            <h4>💡 生成技巧</h4>
+                            <ul>
+                                <li>使用具体的形容词，如"闪闪发光的"、"古老的"、"神秘的"</li>
+                                <li>描述光线和氛围，如"柔和的光线"、"戏剧性的阴影"</li>
+                                <li>指定艺术风格，如"水彩画风格"、"油画质感"</li>
+                                <li>添加环境描述，如"森林背景"、"城堡内部"</li>
+                                <li>使用负面提示词排除不需要的元素</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI美术生成按钮 -->
+            <div class="ai-generate-section">
+                <button class="ai-generate-button" id="ai-generate-button">
+                    <div class="button-content">
+                        <div class="button-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <div class="button-text">
+                            <h3>AI美术生成</h3>
+                            <p>使用AI技术生成游戏美术资源</p>
+                        </div>
+                        <div class="button-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 左右分隔条 -->
+        <div class="resizer" id="left-resizer"></div>
+
+        <!-- 中间面板 -->
+        <div class="middle-panel" id="middle-panel">
+            <!-- 游戏预览区域 -->
+            <div class="game-preview">
+                <div class="preview-header">
+                    <div class="preview-title-section">
+                        <h3 id="current-game-title">Flappy Bird</h3>
+
+                        <div class="preview-controls">
+                            <button class="control-btn" id="play-btn">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="control-btn" id="pause-btn">
+                                <i class="fas fa-pause"></i>
+                            </button>
+                            <button class="control-btn" id="stop-btn">
+                                <i class="fas fa-stop"></i>
+                            </button>
+                        </div>
+                        <div class="game-page-nav">
+                            <button class="page-nav-btn active" data-page="game">
+                                <i class="fas fa-play-circle"></i>
+                                <span>游戏页面</span>
+                            </button>
+                            <button class="page-nav-btn" data-page="tutorial">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>教程页面</span>
+                            </button>
+                            <button class="page-nav-btn" data-page="settings">
+                                <i class="fas fa-cog"></i>
+                                <span>设置页面</span>
+                            </button>
+                            <button class="page-nav-btn" data-page="leaderboard">
+                                <i class="fas fa-trophy"></i>
+                                <span>排行榜页面</span>
+                            </button>
+                            <button class="page-nav-btn" data-page="stats">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>统计页面</span>
+                            </button>
+                            <button class="page-nav-btn" data-page="new-page">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>新建页面</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <div class="game-canvas-container">
+                    
+                    <canvas id="gameCanvas" width="400" height="300"></canvas>
+                    <div class="canvas-overlay" style="display: none;">
+                        <p>Flappy Bird 游戏加载中...</p>
+                    </div>
+                    
+                    <!-- 视觉编辑按钮 -->
+                    <button class="visual-editor-btn" id="visual-editor-btn" title="切换属性编辑器">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 垂直分隔条 -->
+            <div class="vertical-resizer" id="vertical-resizer"></div>
+
+            <!-- 编辑器区域 -->
+            <div class="editor-panel">
+                <div class="editor-header">
+                    <h3 id="editor-title">属性编辑器</h3>
+                    <div class="editor-tabs">
+                        <button class="editor-tab-btn active" data-editor-tab="properties">
+                            <i class="fas fa-cog"></i>
+                            属性
+                        </button>
+                        <button class="editor-tab-btn" data-editor-tab="code">
+                            <i class="fas fa-code"></i>
+                            代码
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 属性编辑面板 -->
+                <div class="editor-content active" id="properties-editor">
+                    <div class="property-group">
+                        <label>位置</label>
+                        <div class="input-group">
+                            <input type="number" id="pos-x" placeholder="X" value="0">
+                            <input type="number" id="pos-y" placeholder="Y" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="property-group">
+                        <label>大小</label>
+                        <div class="input-group">
+                            <input type="number" id="size-w" placeholder="宽度" value="50">
+                            <input type="number" id="size-h" placeholder="高度" value="50">
+                        </div>
+                    </div>
+                    
+                    <div class="property-group">
+                        <label>图片源</label>
+                        <div class="image-source-group">
+                            <input type="text" id="image-src" placeholder="输入图片URL或选择资源">
+                            <button class="browse-btn">浏览</button>
+                        </div>
+                    </div>
+                    
+                    <div class="property-group">
+                        <label>旋转角度</label>
+                        <input type="range" id="rotation" min="0" max="360" value="0">
+                        <span id="rotation-value">0°</span>
+                    </div>
+                    
+                    <div class="property-group">
+                        <label>透明度</label>
+                        <input type="range" id="opacity" min="0" max="100" value="100">
+                        <span id="opacity-value">100%</span>
+                    </div>
+                    
+                    <div class="editor-actions">
+                        <button class="action-btn primary">应用更改</button>
+                        <button class="action-btn">重置</button>
+                        <button class="action-btn danger">删除元素</button>
+                    </div>
+                </div>
+                
+                <!-- 代码显示面板 -->
+                <div class="editor-content" id="code-editor">
+                    <div class="code-viewer">
+                        <div class="code-header">
+                            <div class="code-file-info">
+                                <i class="fas fa-file-code"></i>
+                                <span id="code-filename">未选择文件</span>
+                            </div>
+                            <div class="code-actions">
+                                <button class="code-btn" id="copy-code-btn" title="复制代码">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button class="code-btn" id="download-code-btn" title="下载文件">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="code-content">
+                            <pre><code id="code-display">// 点击左侧代码资源来查看脚本内容
+// 您可以在这里查看和学习游戏代码
+
+console.log('欢迎使用AI游戏生成器！');</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧分隔条 -->
+        <div class="resizer" id="right-resizer"></div>
+
+        <!-- 右侧对话框 -->
+        <div class="right-panel" id="right-panel">
+            <div class="chat-header">
+                <h3>AI助手</h3>
+                <div class="chat-status">
+                    <div class="status-indicator online"></div>
+                    <span>在线</span>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <p>你好！我是你的AI游戏开发助手。告诉我你想创建什么样的游戏，我会帮你生成相应的代码和资源。</p>
+                        <span class="message-time">刚刚</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <input type="text" id="chatInput" placeholder="描述你想要的游戏功能...">
+                    <button id="sendBtn" class="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-btn" id="game-planning-btn">游戏策划</button>
+                </div>
+            </div>
+            
+            <!-- 游戏策划案页面 -->
+            <div class="game-planning-panel" id="game-planning-panel" style="display: none;">
+                <div class="planning-header">
+                    <button class="back-to-chat-btn" id="back-to-chat-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        返回聊天
+                    </button>
+                    <h3>游戏策划案</h3>
+                    <button class="export-planning-btn" id="export-planning-btn">
+                        <i class="fas fa-download"></i>
+                        导出
+                    </button>
+                </div>
+                
+                <!-- 内容导航指示器 -->
+                <div class="planning-nav-indicator" id="planning-nav-indicator">
+                    <div class="nav-dot active" data-section="basic-info" data-title="基本信息"></div>
+                    <div class="nav-dot" data-section="gameplay" data-title="核心玩法"></div>
+                    <div class="nav-dot" data-section="elements" data-title="游戏元素"></div>
+                    <div class="nav-dot" data-section="technical" data-title="技术规格"></div>
+                    <div class="nav-dot" data-section="art" data-title="美术需求"></div>
+                    <div class="nav-dot" data-section="progress" data-title="开发进度"></div>
+                </div>
+                
+                <div class="planning-content" id="planning-content">
+                    <!-- 滚动提示 -->
+                    <div class="scroll-hint" id="scroll-hint">
+                        <i class="fas fa-mouse"></i>
+                        <span>使用滚轮浏览策划案内容</span>
+                    </div>
+                    
+                    <!-- 游戏基本信息 -->
+                    <div class="planning-section" id="section-basic-info">
+                        <div class="section-header">
+                            <h4><i class="fas fa-info-circle"></i> 游戏基本信息</h4>
+                            <button class="edit-section-btn" data-section="basic-info">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                        <div class="section-content" id="basic-info-content">
+                            <div class="info-row">
+                                <span class="info-label">游戏名称：</span>
+                                <span class="info-value editable" data-field="gameName">Flappy Bird</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">游戏类型：</span>
+                                <span class="info-value editable" data-field="gameType">休闲益智</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">目标平台：</span>
+                                <span class="info-value editable" data-field="platform">Web浏览器</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">开发周期：</span>
+                                <span class="info-value editable" data-field="timeline">1-2周</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 核心玩法 -->
+                    <div class="planning-section" id="section-gameplay">
+                        <div class="section-header">
+                            <h4><i class="fas fa-gamepad"></i> 核心玩法</h4>
+                            <button class="edit-section-btn" data-section="gameplay">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                        <div class="section-content" id="gameplay-content">
+                            <div class="gameplay-item">
+                                <h5>主要机制</h5>
+                                <ul class="editable-list" data-field="mainMechanics">
+                                    <li>点击屏幕让小鸟跳跃</li>
+                                    <li>避开管道障碍物</li>
+                                    <li>获得分数并挑战高分</li>
+                                </ul>
+                            </div>
+                            <div class="gameplay-item">
+                                <h5>操作方式</h5>
+                                <ul class="editable-list" data-field="controls">
+                                    <li>鼠标点击：小鸟跳跃</li>
+                                    <li>空格键：小鸟跳跃</li>
+                                    <li>ESC键：暂停游戏</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏元素 -->
+                    <div class="planning-section" id="section-elements">
+                        <div class="section-header">
+                            <h4><i class="fas fa-puzzle-piece"></i> 游戏元素</h4>
+                            <button class="edit-section-btn" data-section="elements">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                        <div class="section-content" id="elements-content">
+                            <div class="elements-grid">
+                                <div class="element-card">
+                                    <div class="element-icon"><i class="fas fa-dove"></i></div>
+                                    <h5>小鸟角色</h5>
+                                    <p>主角，受重力影响，可通过点击跳跃</p>
+                                </div>
+                                <div class="element-card">
+                                    <div class="element-icon"><i class="fas fa-columns"></i></div>
+                                    <h5>管道障碍</h5>
+                                    <p>随机高度的管道，玩家需要避开</p>
+                                </div>
+                                <div class="element-card">
+                                    <div class="element-icon"><i class="fas fa-cloud"></i></div>
+                                    <h5>背景元素</h5>
+                                    <p>天空背景、云朵动画增加视觉效果</p>
+                                </div>
+                                <div class="element-card">
+                                    <div class="element-icon"><i class="fas fa-trophy"></i></div>
+                                    <h5>分数系统</h5>
+                                    <p>通过管道获得分数，记录最高分</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 技术规格 -->
+                    <div class="planning-section" id="section-technical">
+                        <div class="section-header">
+                            <h4><i class="fas fa-cogs"></i> 技术规格</h4>
+                            <button class="edit-section-btn" data-section="technical">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                        <div class="section-content" id="technical-content">
+                            <div class="tech-row">
+                                <span class="tech-label">开发语言：</span>
+                                <span class="tech-value editable" data-field="language">HTML5 + JavaScript + CSS3</span>
+                            </div>
+                            <div class="tech-row">
+                                <span class="tech-label">渲染技术：</span>
+                                <span class="tech-value editable" data-field="rendering">Canvas 2D API</span>
+                            </div>
+                            <div class="tech-row">
+                                <span class="tech-label">音频支持：</span>
+                                <span class="tech-value editable" data-field="audio">Web Audio API</span>
+                            </div>
+                            <div class="tech-row">
+                                <span class="tech-label">存储方案：</span>
+                                <span class="tech-value editable" data-field="storage">LocalStorage</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 美术需求 -->
+                    <div class="planning-section" id="section-art">
+                        <div class="section-header">
+                            <h4><i class="fas fa-palette"></i> 美术需求</h4>
+                            <button class="edit-section-btn" data-section="art">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                        <div class="section-content" id="art-content">
+                            <div class="art-category">
+                                <h5>角色设计</h5>
+                                <ul class="art-list editable-list" data-field="characters">
+                                    <li>小鸟主角 - 可爱风格，多种颜色</li>
+                                    <li>飞行动画 - 翅膀扇动效果</li>
+                                </ul>
+                            </div>
+                            <div class="art-category">
+                                <h5>场景设计</h5>
+                                <ul class="art-list editable-list" data-field="scenes">
+                                    <li>天空背景 - 渐变蓝色</li>
+                                    <li>管道障碍 - 绿色经典风格</li>
+                                    <li>云朵动画 - 飘动效果</li>
+                                </ul>
+                            </div>
+                            <div class="art-category">
+                                <h5>UI设计</h5>
+                                <ul class="art-list editable-list" data-field="ui">
+                                    <li>分数显示 - 大号字体</li>
+                                    <li>开始界面 - 简洁明了</li>
+                                    <li>游戏结束界面 - 重玩按钮</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 开发进度 -->
+                    <div class="planning-section" id="section-progress">
+                        <div class="section-header">
+                            <h4><i class="fas fa-tasks"></i> 开发进度</h4>
+                            <button class="edit-section-btn" data-section="progress">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                        <div class="section-content" id="progress-content">
+                            <div class="progress-item completed">
+                                <div class="progress-icon"><i class="fas fa-check-circle"></i></div>
+                                <div class="progress-text">
+                                    <h5>核心游戏机制</h5>
+                                    <p>小鸟物理系统、跳跃控制已完成</p>
+                                </div>
+                                <div class="progress-status">已完成</div>
+                            </div>
+                            <div class="progress-item completed">
+                                <div class="progress-icon"><i class="fas fa-check-circle"></i></div>
+                                <div class="progress-text">
+                                    <h5>管道系统</h5>
+                                    <p>障碍物生成、碰撞检测已完成</p>
+                                </div>
+                                <div class="progress-status">已完成</div>
+                            </div>
+                            <div class="progress-item completed">
+                                <div class="progress-icon"><i class="fas fa-check-circle"></i></div>
+                                <div class="progress-text">
+                                    <h5>分数系统</h5>
+                                    <p>得分计算、最高分记录已完成</p>
+                                </div>
+                                <div class="progress-status">已完成</div>
+                            </div>
+                            <div class="progress-item in-progress">
+                                <div class="progress-icon"><i class="fas fa-clock"></i></div>
+                                <div class="progress-text">
+                                    <h5>音效系统</h5>
+                                    <p>背景音乐、音效播放待完善</p>
+                                </div>
+                                <div class="progress-status">进行中</div>
+                            </div>
+                            <div class="progress-item pending">
+                                <div class="progress-icon"><i class="fas fa-circle"></i></div>
+                                <div class="progress-text">
+                                    <h5>多人排行榜</h5>
+                                    <p>在线排行榜功能待开发</p>
+                                </div>
+                                <div class="progress-status">待开始</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
